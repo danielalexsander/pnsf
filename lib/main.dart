@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:http/http.dart';
 import 'package:pnsf/pages/cifra.dart';
 
 void main() {
@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
       title: 'PNSF',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color.fromARGB(255, 44, 53, 182)),
+            seedColor: const Color.fromARGB(255, 61, 88, 236)),
         useMaterial3: true,
       ),
       home: const MyHomePage(title: 'PNSF Cifras Missa'),
@@ -41,11 +41,17 @@ class _MyHomePageState extends State<MyHomePage> {
 
   // Fetch content from the json file
   Future<void> readJson() async {
-    final String response =
-        await rootBundle.loadString('assets/json/cifras.json');
-    final data = await json.decode(response);
+    var url = Uri.parse(
+        "https://raw.githubusercontent.com/danielalexsander/pnsf/master/assets/json/cifras.json");
+    Response response = await get(url);
+
+    // int statusCode = response.statusCode;
+    String json = response.body;
+
+    final cifra = jsonDecode(json) as Map<String, dynamic>;
+
     setState(() {
-      _cifras = data["cifras"];
+      _cifras = cifra["cifras"];
     });
   }
 
@@ -73,9 +79,12 @@ class _MyHomePageState extends State<MyHomePage> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => CifraPage(
-                                        idCifra: _cifras[index]["id"],
-                                        tituloCifra: _cifras[index]["titulo"])),
+                                  builder: (context) => CifraPage(
+                                    idCifra: _cifras[index]["id"],
+                                    tituloCifra: _cifras[index]["titulo"],
+                                    base64Cifra: _cifras[index]["html_base64"],
+                                  ),
+                                ),
                               );
                             },
                             leading: Text(_cifras[index]["id"]),
