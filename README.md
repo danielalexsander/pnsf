@@ -1,6 +1,6 @@
 # pnsf
 
-Aplicativo com as cifras das músicas usadas na Santa Missa.
+Aplicativo em Flutter com as cifras das músicas usadas na Santa Missa.
 
 ## Instruções
 
