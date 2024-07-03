@@ -1,3 +1,13 @@
+/**
+* [PNSF - Cifras]
+* @package   [pnsf]
+* @category  [Cifras]
+* @author    Daniel Alexsander Inocêncio [daniel.alexsander00@hotmail.com]
+* @copyright [Daniel Alexsander 2024]
+* @version   v1
+* @since     02/07/2024
+*/
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -11,7 +21,6 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -39,7 +48,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   List _cifras = [];
 
-  // This list holds the data for the list view
   List _foundUsers = [];
 
   @override
@@ -49,12 +57,13 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
   }
 
-  // Fetch content from the json file
+  // Função que lê o JSON do github raw
   Future<void> readJson() async {
     var url = Uri.parse(
         "https://raw.githubusercontent.com/danielalexsander/pnsf/master/assets/json/cifras.json");
     Response response = await get(url);
 
+    // Caso precise do statuscode
     // int statusCode = response.statusCode;
     String json = response.body;
 
@@ -66,24 +75,21 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  // This function is called whenever the text field changes
+  // Essa Função é chamada toda vez que é digitado algo na busca
   void _runFilter(String enteredKeyword) {
     List results = [];
     if (enteredKeyword.isEmpty) {
-      // if the search field is empty or only contains white-space, we'll display all users
+      // Se a busca estiver vazia, mostra todos os resultados
       results = _cifras;
       setState(() {
         _foundUsers = results;
       });
     } else {
-      print(enteredKeyword);
       results = _cifras
           .where((user) => user["titulo"]
               .toLowerCase()
               .contains(enteredKeyword.toLowerCase()))
           .toList();
-      // we use the toLowerCase() method to make it case-insensitive
-      print(results);
       setState(() {
         _foundUsers = results;
       });
@@ -145,39 +151,6 @@ class _MyHomePageState extends State<MyHomePage> {
                         'Nenhuma cifra encontrada',
                         style: TextStyle(fontSize: 24),
                       )),
-            // Display the data loaded from sample.json
-            // _cifras.isNotEmpty
-            //     ? Expanded(
-            //         child: ListView.builder(
-            //           itemCount: _cifras.length,
-            //           itemBuilder: (context, index) {
-            //             return Card(
-            //               margin: const EdgeInsets.all(10),
-            //               child: ListTile(
-            //                 onTap: () {
-            //                   Navigator.push(
-            //                     context,
-            //                     MaterialPageRoute(
-            //                       builder: (context) => CifraPage(
-            //                         idCifra: _cifras[index]["id"],
-            //                         tituloCifra: _cifras[index]["titulo"],
-            //                         base64Cifra: _cifras[index]["html_base64"],
-            //                       ),
-            //                     ),
-            //                   );
-            //                 },
-            //                 leading: Text(_cifras[index]["id"]),
-            //                 title: Text(_cifras[index]["titulo"]),
-            //                 subtitle: Text(_cifras[index]["autor"]),
-            //               ),
-            //             );
-            //           },
-            //         ),
-            //       )
-            //     : ElevatedButton(
-            //         child: const Text('Carregar Cifras'),
-            //         onPressed: readJson,
-            //       )
           ],
         ),
       ),
