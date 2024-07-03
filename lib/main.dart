@@ -39,6 +39,11 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   List _cifras = [];
 
+  @override
+  void initState() {
+    readJson();
+  }
+
   // Fetch content from the json file
   Future<void> readJson() async {
     var url = Uri.parse(
