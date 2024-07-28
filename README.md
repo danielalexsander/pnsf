@@ -20,6 +20,7 @@ Aplicativo em Flutter com as cifras das músicas usadas na Santa Missa.
 * Categoria 14 -> Diversos
 * Categoria 15 -> Anunciamos
 * Categoria 16 -> Amém
+* Categoria 17 -> Adoração
 
 ## Processo para salvar no conteúdo **html_base64** (assets/json/cifras.json)
 
