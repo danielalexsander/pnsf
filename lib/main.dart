@@ -13,6 +13,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:pnsf/pages/cifra.dart';
+import 'package:pnsf/widgets/side_menu.dart';
 
 void main() {
   runApp(const MyApp());
@@ -27,10 +28,10 @@ class MyApp extends StatelessWidget {
       title: 'PNSF',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color.fromARGB(255, 61, 88, 236)),
+            seedColor: const Color.fromARGB(255, 21, 56, 115)),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'PNSF Cifras Missa'),
+      home: const MyHomePage(title: 'Todas as Cifras'),
       debugShowCheckedModeBanner: false,
     );
   }
@@ -48,12 +49,12 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   List _cifras = [];
 
-  List _foundUsers = [];
+  List _foundCifra = [];
 
   @override
   void initState() {
     readJson();
-    _foundUsers = _cifras;
+    _foundCifra = _cifras;
     super.initState();
   }
 
@@ -71,7 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     setState(() {
       _cifras = cifra["cifras"];
-      _foundUsers = cifra["cifras"];
+      _foundCifra = cifra["cifras"];
     });
   }
 
@@ -82,7 +83,7 @@ class _MyHomePageState extends State<MyHomePage> {
       // Se a busca estiver vazia, mostra todos os resultados
       results = _cifras;
       setState(() {
-        _foundUsers = results;
+        _foundCifra = results;
       });
     } else {
       results = _cifras
@@ -91,7 +92,7 @@ class _MyHomePageState extends State<MyHomePage> {
               .contains(enteredKeyword.toLowerCase()))
           .toList();
       setState(() {
-        _foundUsers = results;
+        _foundCifra = results;
       });
     }
   }
@@ -99,14 +100,16 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: NavDrawer(),
       appBar: AppBar(
-        backgroundColor: Colors.lightBlue,
+        backgroundColor: Color.fromARGB(255, 21, 56, 115),
         title: Text(
           widget.title,
           style: TextStyle(
             color: Colors.white,
           ),
         ),
+        iconTheme: IconThemeData(color: Colors.white),
       ),
       body: Center(
         child: Column(
@@ -120,9 +123,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   contentPadding: EdgeInsets.all(5)),
             ),
             Expanded(
-                child: _foundUsers.isNotEmpty
+                child: _foundCifra.isNotEmpty
                     ? ListView.builder(
-                        itemCount: _foundUsers.length,
+                        itemCount: _foundCifra.length,
                         itemBuilder: (context, index) {
                           return Card(
                             margin: const EdgeInsets.all(10),
@@ -132,23 +135,23 @@ class _MyHomePageState extends State<MyHomePage> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => CifraPage(
-                                      idCifra: _foundUsers[index]["id"],
-                                      tituloCifra: _foundUsers[index]["titulo"],
-                                      base64Cifra: _foundUsers[index]
+                                      idCifra: _foundCifra[index]["id"],
+                                      tituloCifra: _foundCifra[index]["titulo"],
+                                      base64Cifra: _foundCifra[index]
                                           ["html_base64"],
                                     ),
                                   ),
                                 );
                               },
-                              leading: Text(_foundUsers[index]["id"]),
-                              title: Text(_foundUsers[index]["titulo"]),
-                              subtitle: Text(_foundUsers[index]["autor"]),
+                              leading: Text(_foundCifra[index]["id"]),
+                              title: Text(_foundCifra[index]["titulo"]),
+                              subtitle: Text(_foundCifra[index]["autor"]),
                             ),
                           );
                         },
                       )
                     : const Text(
-                        'Nenhuma cifra encontrada',
+                        'Carregando...',
                         style: TextStyle(fontSize: 24),
                       )),
           ],
