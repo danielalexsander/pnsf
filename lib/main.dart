@@ -151,7 +151,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         },
                       )
                     : const Text(
-                        'Carregando...',
+                        'Carregando... / Nenhuma Cifra Encontrada',
                         style: TextStyle(fontSize: 24),
                       )),
           ],

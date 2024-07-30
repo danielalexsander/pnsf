@@ -101,7 +101,7 @@ class _CategoriaPageState extends State<CategoriaPage> {
                         },
                       )
                     : const Text(
-                        'Carregando...',
+                        'Carregando... / Nenhuma Cifra Encontrada',
                         style: TextStyle(fontSize: 24),
                       )),
           ],
