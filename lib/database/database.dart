@@ -55,8 +55,8 @@ class DatabaseAPP {
   }
 
   // Delete Lista
-  static Future deleteLista(idDelete) async {
+  static Future deleteLista(int idDelete) async {
     final db = await DatabaseAPP.db();
-    await db.delete('listas', where: 'id = "' + idDelete + '"');
+    await db.delete('listas', where: 'id = ${idDelete}');
   }
 }

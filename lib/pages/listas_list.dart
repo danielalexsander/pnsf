@@ -43,6 +43,14 @@ class _MyListPageState extends State<MyListPage> {
     return true;
   }
 
+  deleteLista(id) async {
+    await DatabaseAPP.deleteLista(
+      id,
+    );
+
+    return true;
+  }
+
   getListas() async {
     List lista_db = await DatabaseAPP.getListas();
 
@@ -96,6 +104,9 @@ class _MyListPageState extends State<MyListPage> {
                                   ),
                                 );
                               },
+                              onLongPress: () {
+                                _dialogDeleteList(context, _list[index]["id"]);
+                              },
                               leading: Text(_list[index]["id"].toString()),
                               title: Text(_list[index]["titulo"]),
                             ),
@@ -148,6 +159,48 @@ class _MyListPageState extends State<MyListPage> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => MyListNew(),
+                  ),
+                );
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _dialogDeleteList(BuildContext context, int idLista) {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Excluir Lista'),
+          content: Text('Deseja realmente excluir esta Lista?'),
+          actions: <Widget>[
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Não'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Sim'),
+              onPressed: () {
+                // ************ DELETA LISTA **************
+                deleteLista(idLista);
+                // ************ DELETA LISTA **************
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MyListPage(
+                      title: 'Listas',
+                    ),
                   ),
                 );
               },
