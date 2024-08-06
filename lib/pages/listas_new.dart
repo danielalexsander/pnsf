@@ -79,6 +79,7 @@ class _MyListNewState extends State<MyListNew> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           print('SALVA LISTA');
+          // Criar Class para salvar Localmente a Lista a partir dos IDs
           print(_idsList);
         },
         child: Icon(Icons.check),
@@ -106,7 +107,11 @@ class _MyListNewState extends State<MyListNew> {
                               onChanged: (bool? value) {
                                 setState(() {
                                   _isCheckedList[index] = value!;
-                                  _idsList.add(_foundCifra[index]["id"]);
+                                  if (value) {
+                                    _idsList.add(_foundCifra[index]["id"]);
+                                  } else {
+                                    _idsList.remove(_foundCifra[index]["id"]);
+                                  }
                                 });
                               },
                               title: Text(_foundCifra[index]["titulo"]),
