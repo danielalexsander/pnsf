@@ -78,7 +78,7 @@ class _MyListNewState extends State<MyListNew> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          print('SALVA LISTA');
+          print('SALVA CIFRAS NA LISTA');
           // Criar Class para salvar Localmente a Lista a partir dos IDs
           print(_idsList);
         },

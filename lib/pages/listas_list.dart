@@ -32,16 +32,18 @@ class _MyListPageState extends State<MyListPage> {
         iconTheme: IconThemeData(color: Colors.white),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const MyListNew(
-                title: 'Nova Lista',
-              ),
-            ),
-          )
-        },
+        onPressed: () => _dialogBuilder(context),
+        // {
+        //   // Navigator.push(
+        //   //   context,
+        //   //   MaterialPageRoute(
+        //   //     builder: (context) => const MyListNew(
+        //   //       title: 'Nova Lista',
+        //   //     ),
+        //   //   ),
+        //   // )
+
+        // },
         child: const Icon(Icons.format_list_bulleted_add),
       ),
       body: Center(
@@ -83,6 +85,51 @@ class _MyListPageState extends State<MyListPage> {
           ],
         ),
       ),
+    );
+  }
+
+  Future<void> _dialogBuilder(BuildContext context) {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Título da Nova Lista'),
+          content: TextField(
+            decoration: const InputDecoration(
+              labelText: 'Título',
+              contentPadding: EdgeInsets.all(5),
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Cancelar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Salvar'),
+              onPressed: () {
+                // ************ CRIA NOVA LISTA **************
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const MyListNew(
+                      title: 'Nova Lista',
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }
