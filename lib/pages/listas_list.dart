@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:pnsf/database/database.dart';
 import 'package:pnsf/pages/listas_new.dart';
 import 'package:pnsf/pages/listas_page.dart';
 import 'package:pnsf/widgets/side_menu.dart';
@@ -16,7 +19,54 @@ class MyListPage extends StatefulWidget {
 }
 
 class _MyListPageState extends State<MyListPage> {
-  List _foundCifra = [];
+  final _model = TextEditingController();
+  List _list = [];
+  List _lastLista = [];
+
+  @override
+  void initState() {
+    super.initState();
+
+    getListas();
+    getLastLista();
+  }
+
+  @override
+  void dispose() {
+    _model.dispose();
+    super.dispose();
+  }
+
+  setLista() async {
+    await DatabaseAPP.setLista(
+      _model.text,
+    );
+
+    return true;
+  }
+
+  getLastLista() async {
+    List ultimo_id_bd = await DatabaseAPP.getLastIdLista();
+
+    setState(() {
+      _lastLista = ultimo_id_bd;
+    });
+
+    print('_lastLista');
+    print(_lastLista[0]['titulo']);
+  }
+
+  getListas() async {
+    List lista_db = await DatabaseAPP.getListas();
+
+    setState(() {
+      _list = lista_db;
+    });
+
+    print('_list');
+    print(_list);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,17 +83,6 @@ class _MyListPageState extends State<MyListPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _dialogBuilder(context),
-        // {
-        //   // Navigator.push(
-        //   //   context,
-        //   //   MaterialPageRoute(
-        //   //     builder: (context) => const MyListNew(
-        //   //       title: 'Nova Lista',
-        //   //     ),
-        //   //   ),
-        //   // )
-
-        // },
         child: const Icon(Icons.format_list_bulleted_add),
       ),
       body: Center(
@@ -51,29 +90,30 @@ class _MyListPageState extends State<MyListPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Expanded(
-                child: _foundCifra.isNotEmpty
+                child: _list.isNotEmpty
                     ? ListView.builder(
-                        itemCount: _foundCifra.length,
+                        itemCount: _list.length,
                         itemBuilder: (context, index) {
                           return Card(
                             margin: const EdgeInsets.all(10),
                             child: ListTile(
                               onTap: () {
+                                var nList = json
+                                    .decode(_list[index]["ids_lista"])
+                                    .cast<dynamic>()
+                                    .toList();
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => MyList(
-                                      idCifra: _foundCifra[index]["id"],
-                                      tituloCifra: _foundCifra[index]["titulo"],
-                                      base64Cifra: _foundCifra[index]
-                                          ["html_base64"],
+                                      idsLista: nList,
+                                      tituloLista: _list[index]["titulo"],
                                     ),
                                   ),
                                 );
                               },
-                              leading: Text(_foundCifra[index]["id"]),
-                              title: Text(_foundCifra[index]["titulo"]),
-                              subtitle: Text(_foundCifra[index]["autor"]),
+                              leading: Text(_list[index]["id"].toString()),
+                              title: Text(_list[index]["titulo"]),
                             ),
                           );
                         },
@@ -95,6 +135,7 @@ class _MyListPageState extends State<MyListPage> {
         return AlertDialog(
           title: const Text('Título da Nova Lista'),
           content: TextField(
+            controller: _model,
             decoration: const InputDecoration(
               labelText: 'Título',
               contentPadding: EdgeInsets.all(5),
@@ -117,12 +158,12 @@ class _MyListPageState extends State<MyListPage> {
               child: const Text('Salvar'),
               onPressed: () {
                 // ************ CRIA NOVA LISTA **************
+                setLista();
+                // ************ CRIA NOVA LISTA **************
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const MyListNew(
-                      title: 'Nova Lista',
-                    ),
+                    builder: (context) => MyListNew(),
                   ),
                 );
               },

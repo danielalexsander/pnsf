@@ -2,12 +2,12 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:pnsf/database/database.dart';
+import 'package:pnsf/pages/listas_page.dart';
 import 'package:pnsf/widgets/side_menu.dart';
 
 class MyListNew extends StatefulWidget {
-  const MyListNew({super.key, required this.title});
-
-  final String title;
+  const MyListNew({super.key});
 
   @override
   State<MyListNew> createState() => _MyListNewState();
@@ -21,11 +21,32 @@ class _MyListNewState extends State<MyListNew> {
   List _isCheckedList = [];
   List _idsList = [];
 
+  List _lastLista = [];
+
   @override
   void initState() {
     readJson();
     _foundCifra = _cifras;
     super.initState();
+
+    getLastLista();
+  }
+
+  getLastLista() async {
+    List ultimo_id_bd = await DatabaseAPP.getLastIdLista();
+
+    setState(() {
+      _lastLista = ultimo_id_bd;
+    });
+
+    print('_lastLista');
+    print(_lastLista[0]['titulo']);
+  }
+
+  updateLista(ids_lista, id_lista) async {
+    await DatabaseAPP.updateLista(ids_lista, id_lista);
+
+    return true;
   }
 
   // Função que lê o JSON
@@ -69,7 +90,7 @@ class _MyListNewState extends State<MyListNew> {
       appBar: AppBar(
         backgroundColor: Color.fromARGB(255, 21, 56, 115),
         title: Text(
-          widget.title,
+          _lastLista[0]['titulo'],
           style: TextStyle(
             color: Colors.white,
           ),
@@ -78,9 +99,16 @@ class _MyListNewState extends State<MyListNew> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          print('SALVA CIFRAS NA LISTA');
-          // Criar Class para salvar Localmente a Lista a partir dos IDs
-          print(_idsList);
+          updateLista(_idsList.toString(), _lastLista[0]['id']);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => MyList(
+                idsLista: _idsList,
+                tituloLista: _lastLista[0]['titulo'],
+              ),
+            ),
+          );
         },
         child: Icon(Icons.check),
       ),

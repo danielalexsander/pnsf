@@ -24,6 +24,12 @@ class DatabaseAPP {
     return db.query('listas', orderBy: "id");
   }
 
+  static Future<List<Map<String, dynamic>>> getLastIdLista() async {
+    final db = await DatabaseAPP.db();
+
+    return db.query('listas', orderBy: "id DESC", limit: 1);
+  }
+
   // Insert de Nova Lista
   static Future<int> setLista(String titulo) async {
     final db = await DatabaseAPP.db();
@@ -37,14 +43,14 @@ class DatabaseAPP {
   }
 
   // Update Lista
-  static Future updateLista(String ids_lista) async {
+  static Future updateLista(String ids_lista, int id_lista) async {
     final db = await DatabaseAPP.db();
 
     final data = {
       'ids_lista': ids_lista,
     };
 
-    final result = await db.update('listas', data);
+    final result = await db.update('listas', data, where: "id = ${id_lista}");
     return result;
   }
 

@@ -1,136 +1,111 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:webview_flutter/webview_flutter.dart';
-
-// #docregion platform_imports
-// Import for Android features.
-import 'package:webview_flutter_android/webview_flutter_android.dart';
-// Import for iOS features.
-import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
-// #enddocregion platform_imports
+import 'package:flutter/services.dart';
+// import 'package:http/http.dart';
+import 'package:pnsf/pages/cifra.dart';
+import 'package:pnsf/widgets/side_menu.dart';
 
 class MyList extends StatefulWidget {
-  final String idCifra;
-  final String tituloCifra;
-  final String base64Cifra;
   const MyList({
     super.key,
-    required this.idCifra,
-    required this.tituloCifra,
-    required this.base64Cifra,
+    required this.idsLista,
+    required this.tituloLista,
   });
+
+  final List idsLista;
+  final String tituloLista;
 
   @override
   State<MyList> createState() => _MyListState();
 }
 
 class _MyListState extends State<MyList> {
-  late final WebViewController _controller;
+  List _newListList = [];
 
   @override
   void initState() {
+    readJson();
     super.initState();
+  }
 
-    // #docregion platform_features
-    late final PlatformWebViewControllerCreationParams params;
-    if (WebViewPlatform.instance is WebKitWebViewPlatform) {
-      params = WebKitWebViewControllerCreationParams(
-        allowsInlineMediaPlayback: true,
-        mediaTypesRequiringUserAction: const <PlaybackMediaTypes>{},
-      );
-    } else {
-      params = const PlatformWebViewControllerCreationParams();
+  // Função que lê o JSON
+  Future<void> readJson() async {
+    final String response =
+        await rootBundle.loadString('assets/json/cifras.json');
+    final cifra = await json.decode(response) as Map<String, dynamic>;
+
+    // Ao ler o JSON, verifica se o id na lista é a mesma da desejada
+    // Se for, adiciona na lista e exibe.
+    var indice = 0;
+    for (var cif in cifra['cifras']) {
+      for (var i = 0; i < widget.idsLista.length; i++) {
+        print(cif['id']);
+        if (cif['id'] == widget.idsLista[i].toString()) {
+          print('entrou aqui');
+          _newListList.add(cifra['cifras'][indice]);
+        }
+        indice++;
+      }
     }
 
-    final WebViewController controller =
-        WebViewController.fromPlatformCreationParams(params);
-    // #enddocregion platform_features
-
-    var strCifra = utf8.decode(base64.decode(widget.base64Cifra));
-    controller..loadHtmlString(strCifra);
-
-    // #docregion platform_features
-    if (controller.platform is AndroidWebViewController) {
-      AndroidWebViewController.enableDebugging(true);
-      (controller.platform as AndroidWebViewController)
-          .setMediaPlaybackRequiresUserGesture(false);
-    }
-    // #enddocregion platform_features
-
-    _controller = controller;
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: NavDrawer(),
       appBar: AppBar(
-        title: Text(widget.tituloCifra),
-        // This drop down menu demonstrates that Flutter widgets can be shown over the web view.
-        actions: <Widget>[
-          // NavigationControls(webViewController: _controller),
-          // SampleMenu(webViewController: _controller),
-        ],
+        backgroundColor: Color.fromARGB(255, 21, 56, 115),
+        title: Text(
+          widget.tituloLista,
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+        iconTheme: IconThemeData(color: Colors.white),
       ),
-      body: WebViewWidget(controller: _controller),
-    );
-  }
-}
-
-enum MenuOptions {
-  loadHtmlString,
-}
-
-class SampleMenu extends StatelessWidget {
-  SampleMenu({
-    super.key,
-    required this.webViewController,
-  });
-
-  final WebViewController webViewController;
-  late final WebViewCookieManager cookieManager = WebViewCookieManager();
-
-  @override
-  Widget build(BuildContext context) {
-    return PopupMenuButton<MenuOptions>(
-      key: const ValueKey<String>('ShowPopupMenu'),
-      onSelected: (MenuOptions value) {
-        switch (value) {
-          case MenuOptions.loadHtmlString:
-            _onLoadHtmlStringExample();
-            break;
-        }
-      },
-      itemBuilder: (BuildContext context) => <PopupMenuItem<MenuOptions>>[
-        const PopupMenuItem<MenuOptions>(
-          value: MenuOptions.loadHtmlString,
-          child: Text('Load HTML string'),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Expanded(
+                child: _newListList.isNotEmpty
+                    ? ListView.builder(
+                        itemCount: _newListList.length,
+                        itemBuilder: (context, index) {
+                          return Card(
+                            margin: const EdgeInsets.all(10),
+                            child: ListTile(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => CifraPage(
+                                      idCifra: _newListList[index]["id"],
+                                      tituloCifra: _newListList[index]
+                                          ["titulo"],
+                                      base64Cifra: _newListList[index]
+                                          ["html_base64"],
+                                    ),
+                                  ),
+                                );
+                              },
+                              leading: Text(_newListList[index]["id"]),
+                              title: Text(_newListList[index]["titulo"]),
+                              subtitle: Text(_newListList[index]["autor"]),
+                            ),
+                          );
+                        },
+                      )
+                    : const Text(
+                        'Carregando...',
+                        style: TextStyle(fontSize: 24),
+                      )),
+          ],
         ),
-      ],
-    );
-  }
-
-  Future<void> _onLoadHtmlStringExample() {
-    var strCifra = utf8.decode(base64.decode('widget.base64Cifra'));
-
-    return webViewController.loadHtmlString(strCifra);
-  }
-}
-
-class NavigationControls extends StatelessWidget {
-  const NavigationControls({super.key, required this.webViewController});
-
-  final WebViewController webViewController;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: <Widget>[
-        IconButton(
-          icon: const Icon(Icons.replay),
-          onPressed: () => webViewController.reload(),
-        ),
-      ],
+      ),
     );
   }
 }
