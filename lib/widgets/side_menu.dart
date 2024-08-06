@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pnsf/main.dart';
 import 'package:pnsf/pages/categoria_list.dart';
+import 'package:pnsf/pages/listas_list.dart';
 
 class NavDrawer extends StatelessWidget {
   @override
@@ -50,6 +51,20 @@ class NavDrawer extends StatelessWidget {
             leading: Icon(Icons.person),
             title: Text('Por Artista (Construção)'),
             onTap: () => {Navigator.of(context).pop()},
+          ),
+          ListTile(
+            leading: Icon(Icons.list),
+            title: Text('Listas'),
+            onTap: () => {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const MyListPage(
+                    title: 'Listas',
+                  ),
+                ),
+              )
+            },
           ),
         ],
       ),
