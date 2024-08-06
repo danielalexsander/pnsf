@@ -18,7 +18,6 @@ class _MyListNewState extends State<MyListNew> {
 
   List _foundCifra = [];
 
-  List _isCheckedList = [];
   List _idsList = [];
 
   List _lastLista = [];
@@ -38,9 +37,6 @@ class _MyListNewState extends State<MyListNew> {
     setState(() {
       _lastLista = ultimo_id_bd;
     });
-
-    print('_lastLista');
-    print(_lastLista[0]['titulo']);
   }
 
   updateLista(ids_lista, id_lista) async {
@@ -58,7 +54,6 @@ class _MyListNewState extends State<MyListNew> {
     setState(() {
       _cifras = cifra["cifras"];
       _foundCifra = cifra["cifras"];
-      _isCheckedList = List.generate(_foundCifra.length, (index) => false);
     });
   }
 
@@ -131,10 +126,10 @@ class _MyListNewState extends State<MyListNew> {
                           return Card(
                             margin: const EdgeInsets.all(10),
                             child: CheckboxListTile(
-                              value: _isCheckedList[index],
+                              value: _foundCifra[index]['isChecked'],
                               onChanged: (bool? value) {
                                 setState(() {
-                                  _isCheckedList[index] = value!;
+                                  _foundCifra[index]['isChecked'] = value!;
                                   if (value) {
                                     _idsList.add(_foundCifra[index]["id"]);
                                   } else {

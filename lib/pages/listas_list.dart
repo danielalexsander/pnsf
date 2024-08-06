@@ -21,14 +21,12 @@ class MyListPage extends StatefulWidget {
 class _MyListPageState extends State<MyListPage> {
   final _model = TextEditingController();
   List _list = [];
-  List _lastLista = [];
 
   @override
   void initState() {
     super.initState();
 
     getListas();
-    getLastLista();
   }
 
   @override
@@ -45,26 +43,12 @@ class _MyListPageState extends State<MyListPage> {
     return true;
   }
 
-  getLastLista() async {
-    List ultimo_id_bd = await DatabaseAPP.getLastIdLista();
-
-    setState(() {
-      _lastLista = ultimo_id_bd;
-    });
-
-    print('_lastLista');
-    print(_lastLista[0]['titulo']);
-  }
-
   getListas() async {
     List lista_db = await DatabaseAPP.getListas();
 
     setState(() {
       _list = lista_db;
     });
-
-    print('_list');
-    print(_list);
   }
 
   @override

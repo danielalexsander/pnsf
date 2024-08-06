@@ -37,9 +37,9 @@ class _MyListState extends State<MyList> {
 
     // Ao ler o JSON, verifica se o id na lista é a mesma da desejada
     // Se for, adiciona na lista e exibe.
-    var indice = 0;
-    for (var cif in cifra['cifras']) {
-      for (var i = 0; i < widget.idsLista.length; i++) {
+    for (var i = 0; i < widget.idsLista.length; i++) {
+      var indice = 0;
+      for (var cif in cifra['cifras']) {
         print(cif['id']);
         if (cif['id'] == widget.idsLista[i].toString()) {
           print('entrou aqui');
