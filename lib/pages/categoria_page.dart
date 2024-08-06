@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-// import 'package:http/http.dart';
+import 'package:http/http.dart';
 import 'package:pnsf/pages/cifra.dart';
 import 'package:pnsf/widgets/side_menu.dart';
 
@@ -34,23 +34,23 @@ class _CategoriaPageState extends State<CategoriaPage> {
     /**
     * VERSÃO ONLINE - BUSCA O JSON DO GITHUB RAW
     */
-    // var url = Uri.parse(
-    //     "https://raw.githubusercontent.com/danielalexsander/pnsf/master/assets/json/cifras.json");
-    // Response response = await get(url);
+    var url = Uri.parse(
+        "https://raw.githubusercontent.com/danielalexsander/pnsf/master/assets/json/cifras.json");
+    Response response = await get(url);
 
     // // Caso precise do statuscode
-    // // int statusCode = response.statusCode;
-    // String json = response.body;
+    // int statusCode = response.statusCode;
+    String json = response.body;
 
-    // final cifra = jsonDecode(json) as Map<String, dynamic>;
+    final cifra = jsonDecode(json) as Map<String, dynamic>;
 
     /**
     * VERSÃO OFFLINE - BUSCA O JSON DO ASSETS
     */
 
-    final String response =
-        await rootBundle.loadString('assets/json/cifras.json');
-    final cifra = await json.decode(response) as Map<String, dynamic>;
+    // final String response =
+    //     await rootBundle.loadString('assets/json/cifras.json');
+    // final cifra = await json.decode(response) as Map<String, dynamic>;
 
     // Ao ler o JSON, verifica se a categoria é a mesma da desejada
     // Se for, adiciona na lista e exibe.

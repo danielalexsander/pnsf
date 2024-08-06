@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-// import 'package:http/http.dart';
+import 'package:http/http.dart';
 import 'package:pnsf/pages/cifra.dart';
 import 'package:pnsf/widgets/side_menu.dart';
 
@@ -31,18 +31,35 @@ class _MyListState extends State<MyList> {
 
   // Função que lê o JSON
   Future<void> readJson() async {
-    final String response =
-        await rootBundle.loadString('assets/json/cifras.json');
-    final cifra = await json.decode(response) as Map<String, dynamic>;
+    /**
+    * VERSÃO ONLINE - BUSCA O JSON DO GITHUB RAW
+    */
+    var url = Uri.parse(
+        "https://raw.githubusercontent.com/danielalexsander/pnsf/master/assets/json/cifras.json");
+    Response response = await get(url);
+
+    // Caso precise do statuscode
+    // int statusCode = response.statusCode;
+    String json = response.body;
+
+    final cifra = jsonDecode(json) as Map<String, dynamic>;
+
+    /**
+    * VERSÃO OFFLINE - BUSCA O JSON DO ASSETS
+    */
+
+    // final String response =
+    //     await rootBundle.loadString('assets/json/cifras.json');
+    // final cifra = await json.decode(response) as Map<String, dynamic>;
 
     // Ao ler o JSON, verifica se o id na lista é a mesma da desejada
     // Se for, adiciona na lista e exibe.
     for (var i = 0; i < widget.idsLista.length; i++) {
       var indice = 0;
       for (var cif in cifra['cifras']) {
-        print(cif['id']);
+        // print(cif['id']);
         if (cif['id'] == widget.idsLista[i].toString()) {
-          print('entrou aqui');
+          // print('entrou aqui');
           _newListList.add(cifra['cifras'][indice]);
         }
         indice++;
