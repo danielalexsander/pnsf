@@ -11,7 +11,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
+import 'package:flutter/services.dart';
+// import 'package:http/http.dart';
 import 'package:pnsf/pages/cifra.dart';
 import 'package:pnsf/widgets/side_menu.dart';
 
@@ -58,17 +59,28 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
   }
 
-  // Função que lê o JSON do github raw
+  // Função que lê o JSON
   Future<void> readJson() async {
-    var url = Uri.parse(
-        "https://raw.githubusercontent.com/danielalexsander/pnsf/master/assets/json/cifras.json");
-    Response response = await get(url);
+    /**
+    * VERSÃO ONLINE - BUSCA O JSON DO GITHUB RAW
+    */
+    // var url = Uri.parse(
+    //     "https://raw.githubusercontent.com/danielalexsander/pnsf/master/assets/json/cifras.json");
+    // Response response = await get(url);
 
-    // Caso precise do statuscode
-    // int statusCode = response.statusCode;
-    String json = response.body;
+    // // Caso precise do statuscode
+    // // int statusCode = response.statusCode;
+    // String json = response.body;
 
-    final cifra = jsonDecode(json) as Map<String, dynamic>;
+    // final cifra = jsonDecode(json) as Map<String, dynamic>;
+
+    /**
+    * VERSÃO OFFLINE - BUSCA O JSON DO ASSETS
+    */
+
+    final String response =
+        await rootBundle.loadString('assets/json/cifras.json');
+    final cifra = await json.decode(response) as Map<String, dynamic>;
 
     setState(() {
       _cifras = cifra["cifras"];
@@ -151,7 +163,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         },
                       )
                     : const Text(
-                        'Carregando... / Nenhuma Cifra Encontrada',
+                        'Carregando...',
                         style: TextStyle(fontSize: 24),
                       )),
           ],
