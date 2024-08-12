@@ -21,7 +21,7 @@ final List<String> categorias = <String>[
   'Dízimo',
   'Final',
   'Envio/Benção',
-  'Padroieira',
+  'Padroeira',
   'Missas Completas',
   'Diversos',
   'Anunciamos',
