@@ -75,6 +75,21 @@ class _MyListNewState extends State<MyListNew> {
     });
   }
 
+  _retiraAcento(palavra) {
+    palavra = palavra.replaceAll("ã", "a");
+    palavra = palavra.replaceAll("õ", "o");
+    palavra = palavra.replaceAll("á", "a");
+    palavra = palavra.replaceAll("é", "é");
+    palavra = palavra.replaceAll("í", "i");
+    palavra = palavra.replaceAll("ó", "o");
+    palavra = palavra.replaceAll("ú", "u");
+    palavra = palavra.replaceAll("ç", "c");
+    palavra = palavra.replaceAll(new RegExp(r"[^\w\s]+"), "");
+    palavra = palavra.replaceAll(" ", "");
+
+    return palavra;
+  }
+
   // Essa Função é chamada toda vez que é digitado algo na busca
   void _runFilter(String enteredKeyword) {
     List results = [];
@@ -85,11 +100,24 @@ class _MyListNewState extends State<MyListNew> {
         _foundCifra = results;
       });
     } else {
+      // Retira Acentuação
+      enteredKeyword = _retiraAcento(enteredKeyword);
+
       results = _cifras
           .where((user) => user["titulo"]
               .toLowerCase()
               .contains(enteredKeyword.toLowerCase()))
           .toList();
+
+      // Se não achar baseado no título, procura no conteúdo
+      if (results.isEmpty) {
+        results = _cifras
+            .where((user) => user["conteudo"]
+                .toLowerCase()
+                .contains(enteredKeyword.toLowerCase()))
+            .toList();
+      }
+
       setState(() {
         _foundCifra = results;
       });
