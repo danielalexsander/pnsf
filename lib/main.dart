@@ -4,7 +4,7 @@
 * @category  [Cifras]
 * @author    Daniel Alexsander Inocêncio [daniel.alexsander00@hotmail.com]
 * @copyright [Daniel Alexsander 2024]
-* @version   v6
+* @version   v7
 * @since     02/07/2024
 */
 

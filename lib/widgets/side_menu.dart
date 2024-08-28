@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pnsf/main.dart';
 import 'package:pnsf/pages/categoria_list.dart';
 import 'package:pnsf/pages/listas_list.dart';
+import 'package:pnsf/widgets/praticar_redirect.dart';
 
 class NavDrawer extends StatelessWidget {
   @override
@@ -37,7 +38,7 @@ class NavDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: Icon(Icons.category),
-            title: Text('Por Categoria'),
+            title: Text('Cifras por Categoria'),
             onTap: () => {
               Navigator.push(
                 context,
@@ -48,9 +49,16 @@ class NavDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: Icon(Icons.person),
-            title: Text('Por Artista (Construção)'),
-            onTap: () => {Navigator.of(context).pop()},
+            leading: Icon(Icons.fitness_center),
+            title: Text('Praticar'),
+            onTap: () => {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const Practice(),
+                ),
+              )
+            },
           ),
           ListTile(
             leading: Icon(Icons.list),
