@@ -1,11 +1,12 @@
 /**
 * [PNSF - Cifras]
-* @package   [pnsf]
-* @category  [Cifras]
-* @author    Daniel Alexsander Inocêncio [daniel.alexsander00@hotmail.com]
-* @copyright [Daniel Alexsander 2024]
-* @version   v7
-* @since     02/07/2024
+* @package      [pnsf]
+* @category     [Cifras]
+* @author       Daniel Alexsander Inocêncio [daniel.alexsander00@hotmail.com]
+* @copyright    [Daniel Alexsander 2024]
+* @devversion   v7
+* @prodversion  v1
+* @since        02/07/2024
 */
 
 import 'dart:async';
