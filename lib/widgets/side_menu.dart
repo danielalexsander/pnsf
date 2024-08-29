@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pnsf/main.dart';
 import 'package:pnsf/pages/categoria_list.dart';
 import 'package:pnsf/pages/listas_list.dart';
-import 'package:pnsf/widgets/praticar_redirect.dart';
+import 'package:pnsf/pages/praticar_redirect.dart';
 
 class NavDrawer extends StatelessWidget {
   @override

@@ -127,7 +127,7 @@ class _PracticeState extends State<Practice> {
       appBar: AppBar(
         backgroundColor: Color.fromARGB(255, 21, 56, 115),
         title: Text(
-          'Prática',
+          'Práticar',
           style: TextStyle(
             color: Colors.white,
           ),
@@ -135,28 +135,33 @@ class _PracticeState extends State<Practice> {
         iconTheme: IconThemeData(color: Colors.white),
       ),
       body: Center(
-        child: TextButton.icon(
-          style: TextButton.styleFrom(
-            foregroundColor: Colors.white,
-            backgroundColor: Color.fromARGB(255, 21, 56, 115),
-          ),
-          onPressed: () {
-            int randomNumber = Random().nextInt(_qtdCifras) + 1;
-
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => CifraPage(
-                  idCifra: _cifras[randomNumber]['id'],
-                  tituloCifra: _cifras[randomNumber]['titulo'],
-                  base64Cifra: _cifras[randomNumber]['html_base64'],
+        child: _cifras.isNotEmpty
+            ? TextButton.icon(
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Color.fromARGB(255, 21, 56, 115),
                 ),
+                onPressed: () {
+                  int randomNumber = Random().nextInt(_qtdCifras) + 1;
+
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CifraPage(
+                        idCifra: _cifras[randomNumber]['id'],
+                        tituloCifra: _cifras[randomNumber]['titulo'],
+                        base64Cifra: _cifras[randomNumber]['html_base64'],
+                      ),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.fitness_center),
+                label: const Text('Praticar Nova Música'),
+              )
+            : const Text(
+                'Carregando...',
+                style: TextStyle(fontSize: 24),
               ),
-            );
-          },
-          icon: const Icon(Icons.fitness_center),
-          label: const Text('Praticar Nova Música'),
-        ),
       ),
     );
   }
