@@ -25,7 +25,7 @@ Aplicativo em Flutter com as cifras das músicas usadas na Santa Missa.
 
 ## Processo para salvar no conteúdo **html_base64** (assets/json/cifras.json)
 
-**.DOCX -> PDF -> HTML -> Base64**
+**.DOCX -> HTML -> Base64**
 
 ## Anotações
 
