@@ -43,7 +43,7 @@ dependencies:
 
 flutter_launcher_icons:
   android: "launcher_icon"
-  image_path_android: "assets/images/pnsf.jpg"
+  image_path_android: "assets/images/logo_app.png"
   # image_path: "assets/images/pnsf.jpg"
   min_sdk_android: 21
 
@@ -73,6 +73,8 @@ flutter:
   assets:
     - assets/json/cifras.json
     - assets/images/pnsf.jpg
+    - assets/images/pnsf_banner.jpg
+    - assets/images/logo_app.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
