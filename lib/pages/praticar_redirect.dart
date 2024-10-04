@@ -127,7 +127,7 @@ class _PracticeState extends State<Practice> {
       appBar: AppBar(
         backgroundColor: Color.fromARGB(255, 21, 56, 115),
         title: Text(
-          'Práticar',
+          'Praticar',
           style: TextStyle(
             color: Colors.white,
           ),
