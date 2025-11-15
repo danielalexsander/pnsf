@@ -136,31 +136,59 @@ class _PracticeState extends State<Practice> {
       ),
       body: Center(
         child: _cifras.isNotEmpty
-            ? TextButton.icon(
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  backgroundColor: Color.fromARGB(255, 21, 56, 115),
-                ),
-                onPressed: () {
-                  int randomNumber = Random().nextInt(_qtdCifras) + 1;
-
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => CifraPage(
-                        idCifra: _cifras[randomNumber]['id'],
-                        tituloCifra: _cifras[randomNumber]['titulo'],
-                        base64Cifra: _cifras[randomNumber]['html_base64'],
-                      ),
+            ? Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 21, 56, 115),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 32, vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                  );
-                },
-                icon: const Icon(Icons.fitness_center),
-                label: const Text('Praticar Nova Música'),
+                  ),
+                  onPressed: () {
+                    int randomNumber = Random().nextInt(_qtdCifras);
+
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CifraPage(
+                          idCifra: _cifras[randomNumber]['id'],
+                          tituloCifra: _cifras[randomNumber]['titulo'],
+                          base64Cifra: _cifras[randomNumber]['html_base64'],
+                        ),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.music_note),
+                  label: const Text(
+                    'Praticar Nova Música',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
               )
-            : const Text(
-                'Carregando...',
-                style: TextStyle(fontSize: 24),
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.music_note,
+                    size: 64,
+                    color: Colors.grey[400],
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Carregando...',
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ],
               ),
       ),
     );

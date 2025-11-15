@@ -206,6 +206,7 @@ class _MyListNewState extends State<MyListNew> {
         iconTheme: IconThemeData(color: Colors.white),
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: const Color.fromARGB(255, 21, 56, 115),
         onPressed: () {
           updateLista(_idsList.toString(), _lastLista[0]['id']);
           Navigator.push(
@@ -218,50 +219,102 @@ class _MyListNewState extends State<MyListNew> {
             ),
           );
         },
-        child: Icon(Icons.check),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            TextField(
-              onChanged: (value) => _runFilter(value),
-              decoration: const InputDecoration(
-                  labelText: 'Procurar',
-                  suffixIcon: Icon(Icons.search),
-                  contentPadding: EdgeInsets.all(5)),
-            ),
-            Expanded(
-                child: _foundCifra.isNotEmpty
-                    ? ListView.builder(
-                        itemCount: _foundCifra.length,
-                        itemBuilder: (context, index) {
-                          return Card(
-                            margin: const EdgeInsets.all(10),
-                            child: CheckboxListTile(
-                              value: _foundCifra[index]['isChecked'],
-                              onChanged: (bool? value) {
-                                setState(() {
-                                  _foundCifra[index]['isChecked'] = value!;
-                                  if (value) {
-                                    _idsList.add(_foundCifra[index]["id"]);
-                                  } else {
-                                    _idsList.remove(_foundCifra[index]["id"]);
-                                  }
-                                });
-                              },
-                              title: Text(_foundCifra[index]["titulo"]),
-                              subtitle: Text(_foundCifra[index]["autor"]),
-                            ),
-                          );
-                        },
-                      )
-                    : const Text(
-                        'Carregando...',
-                        style: TextStyle(fontSize: 24),
-                      )),
-          ],
+        child: const Icon(
+          Icons.check,
+          color: Colors.white,
         ),
+      ),
+      body: Column(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: SearchAnchor(
+              builder: (BuildContext context, SearchController controller) {
+                return SearchBar(
+                  controller: controller,
+                  onChanged: (value) => _runFilter(value),
+                  leading: const Padding(
+                    padding: EdgeInsets.only(left: 8.0),
+                    child: Icon(Icons.search),
+                  ),
+                  hintText: 'Procurar cifras...',
+                  shape: WidgetStateProperty.all(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  elevation: WidgetStateProperty.all(2),
+                  side: WidgetStateProperty.all(
+                    BorderSide(
+                      color: const Color.fromARGB(255, 21, 56, 115)
+                          .withOpacity(0.1),
+                    ),
+                  ),
+                );
+              },
+              suggestionsBuilder:
+                  (BuildContext context, SearchController controller) {
+                return [];
+              },
+            ),
+          ),
+          Expanded(
+            child: _foundCifra.isNotEmpty
+                ? ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    itemCount: _foundCifra.length,
+                    itemBuilder: (context, index) {
+                      return Card(
+                        margin: const EdgeInsets.symmetric(vertical: 8),
+                        elevation: 2,
+                        child: CheckboxListTile(
+                          value: _foundCifra[index]['isChecked'],
+                          onChanged: (bool? value) {
+                            setState(() {
+                              _foundCifra[index]['isChecked'] = value!;
+                              if (value) {
+                                _idsList.add(_foundCifra[index]["id"]);
+                              } else {
+                                _idsList.remove(_foundCifra[index]["id"]);
+                              }
+                            });
+                          },
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 8),
+                          title: Text(
+                            _foundCifra[index]["titulo"],
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                            ),
+                          ),
+                          subtitle: Text(_foundCifra[index]["autor"]),
+                        ),
+                      );
+                    },
+                  )
+                : Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.music_note,
+                          size: 64,
+                          color: Colors.grey[400],
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Carregando...',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+          ),
+        ],
       ),
     );
   }

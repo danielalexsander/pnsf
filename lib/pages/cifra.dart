@@ -65,12 +65,12 @@ class _CifraPageState extends State<CifraPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.tituloCifra),
-        // This drop down menu demonstrates that Flutter widgets can be shown over the web view.
-        actions: <Widget>[
-          // NavigationControls(webViewController: _controller),
-          // SampleMenu(webViewController: _controller),
-        ],
+        backgroundColor: const Color.fromARGB(255, 21, 56, 115),
+        title: Text(
+          widget.tituloCifra,
+          style: const TextStyle(color: Colors.white),
+        ),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: WebViewWidget(controller: _controller),
     );

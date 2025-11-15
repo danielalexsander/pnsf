@@ -159,45 +159,85 @@ class _MyListState extends State<MyList> {
         ),
         iconTheme: IconThemeData(color: Colors.white),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Expanded(
-                child: _newListList.isNotEmpty
-                    ? ListView.builder(
-                        itemCount: _newListList.length,
-                        itemBuilder: (context, index) {
-                          return Card(
-                            margin: const EdgeInsets.all(10),
-                            child: ListTile(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => CifraPage(
-                                      idCifra: _newListList[index]["id"],
-                                      tituloCifra: _newListList[index]
-                                          ["titulo"],
-                                      base64Cifra: _newListList[index]
-                                          ["html_base64"],
-                                    ),
-                                  ),
-                                );
-                              },
-                              leading: Text(_newListList[index]["id"]),
-                              title: Text(_newListList[index]["titulo"]),
-                              subtitle: Text(_newListList[index]["autor"]),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: _newListList.isNotEmpty
+            ? ListView.builder(
+                itemCount: _newListList.length,
+                itemBuilder: (context, index) {
+                  return Card(
+                    margin: const EdgeInsets.symmetric(vertical: 8),
+                    elevation: 2,
+                    child: ListTile(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CifraPage(
+                              idCifra: _newListList[index]["id"],
+                              tituloCifra: _newListList[index]["titulo"],
+                              base64Cifra: _newListList[index]["html_base64"],
                             ),
-                          );
-                        },
-                      )
-                    : const Text(
-                        'Carregando...',
-                        style: TextStyle(fontSize: 24),
-                      )),
-          ],
-        ),
+                          ),
+                        );
+                      },
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 12),
+                      leading: Container(
+                        width: 44,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 21, 56, 115)
+                              .withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Center(
+                          child: Text(
+                            _newListList[index]["id"],
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Color.fromARGB(255, 21, 56, 115),
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ),
+                      title: Text(
+                        _newListList[index]["titulo"],
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                        ),
+                      ),
+                      subtitle: Text(_newListList[index]["autor"]),
+                      trailing: Icon(
+                        Icons.chevron_right,
+                        color: Colors.grey[400],
+                      ),
+                    ),
+                  );
+                },
+              )
+            : Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.music_note,
+                      size: 64,
+                      color: Colors.grey[400],
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Carregando...',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
       ),
     );
   }

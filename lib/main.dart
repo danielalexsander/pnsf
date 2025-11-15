@@ -219,51 +219,119 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         iconTheme: IconThemeData(color: Colors.white),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            TextField(
-              onChanged: (value) => _runFilter(value),
-              decoration: const InputDecoration(
-                  labelText: 'Procurar',
-                  suffixIcon: Icon(Icons.search),
-                  contentPadding: EdgeInsets.all(5)),
+      body: Column(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: SearchAnchor(
+              builder: (BuildContext context, SearchController controller) {
+                return SearchBar(
+                  controller: controller,
+                  onChanged: (value) => _runFilter(value),
+                  leading: const Padding(
+                    padding: EdgeInsets.only(left: 8.0),
+                    child: Icon(Icons.search),
+                  ),
+                  hintText: 'Procurar cifras...',
+                  shape: WidgetStateProperty.all(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  elevation: WidgetStateProperty.all(2),
+                  side: WidgetStateProperty.all(
+                    BorderSide(
+                      color: const Color.fromARGB(255, 21, 56, 115)
+                          .withOpacity(0.1),
+                    ),
+                  ),
+                );
+              },
+              suggestionsBuilder:
+                  (BuildContext context, SearchController controller) {
+                return [];
+              },
             ),
-            Expanded(
-                child: _foundCifra.isNotEmpty
-                    ? ListView.builder(
-                        itemCount: _foundCifra.length,
-                        itemBuilder: (context, index) {
-                          return Card(
-                            margin: const EdgeInsets.all(10),
-                            child: ListTile(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => CifraPage(
-                                      idCifra: _foundCifra[index]["id"],
-                                      tituloCifra: _foundCifra[index]["titulo"],
-                                      base64Cifra: _foundCifra[index]
-                                          ["html_base64"],
-                                    ),
-                                  ),
-                                );
-                              },
-                              leading: Text(_foundCifra[index]["id"]),
-                              title: Text(_foundCifra[index]["titulo"]),
-                              subtitle: Text(_foundCifra[index]["autor"]),
+          ),
+          Expanded(
+            child: _foundCifra.isNotEmpty
+                ? ListView.builder(
+                    itemCount: _foundCifra.length,
+                    itemBuilder: (context, index) {
+                      return Card(
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 6),
+                        elevation: 2,
+                        child: ListTile(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => CifraPage(
+                                  idCifra: _foundCifra[index]["id"],
+                                  tituloCifra: _foundCifra[index]["titulo"],
+                                  base64Cifra: _foundCifra[index]
+                                      ["html_base64"],
+                                ),
+                              ),
+                            );
+                          },
+                          leading: Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: const Color.fromARGB(255, 21, 56, 115)
+                                  .withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8),
                             ),
-                          );
-                        },
-                      )
-                    : const Text(
-                        'Carregando...',
-                        style: TextStyle(fontSize: 24),
-                      )),
-          ],
-        ),
+                            child: Center(
+                              child: Text(
+                                _foundCifra[index]["id"].toString(),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Color.fromARGB(255, 21, 56, 115),
+                                ),
+                              ),
+                            ),
+                          ),
+                          title: Text(
+                            _foundCifra[index]["titulo"],
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                            ),
+                          ),
+                          subtitle: Text(_foundCifra[index]["autor"]),
+                          trailing: const Icon(
+                            Icons.chevron_right,
+                            color: Color.fromARGB(255, 21, 56, 115),
+                          ),
+                        ),
+                      );
+                    },
+                  )
+                : Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.music_note,
+                          size: 64,
+                          color: Colors.grey[400],
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Carregando...',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+          ),
+        ],
       ),
     );
   }

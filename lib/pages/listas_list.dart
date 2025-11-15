@@ -74,51 +74,106 @@ class _MyListPageState extends State<MyListPage> {
         iconTheme: IconThemeData(color: Colors.white),
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: const Color.fromARGB(255, 21, 56, 115),
         onPressed: () => _dialogBuilder(context),
-        child: const Icon(Icons.format_list_bulleted_add),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Expanded(
-                child: _list.isNotEmpty
-                    ? ListView.builder(
-                        itemCount: _list.length,
-                        itemBuilder: (context, index) {
-                          return Card(
-                            margin: const EdgeInsets.all(10),
-                            child: ListTile(
-                              onTap: () {
-                                var nList = json
-                                    .decode(_list[index]["ids_lista"])
-                                    .cast<dynamic>()
-                                    .toList();
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => MyList(
-                                      idsLista: nList,
-                                      tituloLista: _list[index]["titulo"],
-                                    ),
-                                  ),
-                                );
-                              },
-                              onLongPress: () {
-                                _dialogDeleteList(context, _list[index]["id"]);
-                              },
-                              leading: Text(_list[index]["id"].toString()),
-                              title: Text(_list[index]["titulo"]),
-                            ),
-                          );
-                        },
-                      )
-                    : const Text(
-                        'Nenhuma Lista Encontrada',
-                        style: TextStyle(fontSize: 24),
-                      )),
-          ],
+        child: const Icon(
+          Icons.add,
+          color: Colors.white,
         ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: _list.isNotEmpty
+            ? ListView.builder(
+                itemCount: _list.length,
+                itemBuilder: (context, index) {
+                  return Card(
+                    margin: const EdgeInsets.symmetric(vertical: 8),
+                    elevation: 2,
+                    child: ListTile(
+                      onTap: () {
+                        var nList = json
+                            .decode(_list[index]["ids_lista"])
+                            .cast<dynamic>()
+                            .toList();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => MyList(
+                              idsLista: nList,
+                              tituloLista: _list[index]["titulo"],
+                            ),
+                          ),
+                        );
+                      },
+                      onLongPress: () {
+                        _dialogDeleteList(context, _list[index]["id"]);
+                      },
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 12),
+                      leading: Container(
+                        width: 44,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 21, 56, 115)
+                              .withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Center(
+                          child: Text(
+                            _list[index]["id"].toString(),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Color.fromARGB(255, 21, 56, 115),
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ),
+                      title: Text(
+                        _list[index]["titulo"],
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                        ),
+                      ),
+                      trailing: Icon(
+                        Icons.chevron_right,
+                        color: Colors.grey[400],
+                      ),
+                    ),
+                  );
+                },
+              )
+            : Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.playlist_add,
+                      size: 64,
+                      color: Colors.grey[400],
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Nenhuma Lista Encontrada',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.grey[600],
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Crie uma nova lista para começar',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey[400],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
       ),
     );
   }
@@ -128,33 +183,47 @@ class _MyListPageState extends State<MyListPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Título da Nova Lista'),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          title: const Text(
+            'Nova Lista',
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 20,
+            ),
+          ),
           content: TextField(
             controller: _model,
-            decoration: const InputDecoration(
-              labelText: 'Título',
-              contentPadding: EdgeInsets.all(5),
+            decoration: InputDecoration(
+              labelText: 'Título da Lista',
+              hintText: 'Digite um nome para sua lista',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 12,
+              ),
+              prefixIcon: const Icon(Icons.list),
             ),
           ),
           actions: <Widget>[
             TextButton(
-              style: TextButton.styleFrom(
-                textStyle: Theme.of(context).textTheme.labelLarge,
-              ),
-              child: const Text('Cancelar'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
+              child: const Text('Cancelar'),
             ),
-            TextButton(
-              style: TextButton.styleFrom(
-                textStyle: Theme.of(context).textTheme.labelLarge,
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromARGB(255, 21, 56, 115),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
               ),
-              child: const Text('Salvar'),
               onPressed: () {
-                // ************ CRIA NOVA LISTA **************
                 setLista();
-                // ************ CRIA NOVA LISTA **************
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -162,6 +231,10 @@ class _MyListPageState extends State<MyListPage> {
                   ),
                 );
               },
+              child: const Text(
+                'Salvar',
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           ],
         );
@@ -174,27 +247,36 @@ class _MyListPageState extends State<MyListPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Excluir Lista'),
-          content: Text('Deseja realmente excluir esta Lista?'),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          title: const Text(
+            'Excluir Lista',
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 20,
+            ),
+          ),
+          content: const Text(
+            'Tem certeza que deseja excluir esta lista? Esta ação não pode ser desfeita.',
+            style: TextStyle(fontSize: 16),
+          ),
           actions: <Widget>[
             TextButton(
-              style: TextButton.styleFrom(
-                textStyle: Theme.of(context).textTheme.labelLarge,
-              ),
-              child: const Text('Não'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
+              child: const Text('Cancelar'),
             ),
-            TextButton(
-              style: TextButton.styleFrom(
-                textStyle: Theme.of(context).textTheme.labelLarge,
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
               ),
-              child: const Text('Sim'),
               onPressed: () {
-                // ************ DELETA LISTA **************
                 deleteLista(idLista);
-                // ************ DELETA LISTA **************
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -204,6 +286,10 @@ class _MyListPageState extends State<MyListPage> {
                   ),
                 );
               },
+              child: const Text(
+                'Excluir',
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           ],
         );

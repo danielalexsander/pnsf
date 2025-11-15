@@ -11,20 +11,18 @@ class NavDrawer extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[
-          DrawerHeader(
-            child: Text(
-              '',
-              style: TextStyle(color: Colors.white, fontSize: 25),
-            ),
+          Container(
+            height: 160,
             decoration: BoxDecoration(
-                color: Colors.green,
-                image: DecorationImage(
-                    fit: BoxFit.fill,
-                    image: AssetImage('assets/images/pnsf_banner.jpg'))),
+              image: DecorationImage(
+                fit: BoxFit.cover,
+                image: AssetImage('assets/images/pnsf_banner.jpg'),
+              ),
+            ),
           ),
           ListTile(
-            leading: Icon(Icons.all_inbox_rounded),
-            title: Text('Todas as Cifras'),
+            leading: Icon(Icons.music_note),
+            title: const Text('Todas as Cifras'),
             onTap: () => {
               Navigator.push(
                 context,
@@ -38,7 +36,7 @@ class NavDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: Icon(Icons.category),
-            title: Text('Cifras por Categoria'),
+            title: const Text('Cifras por Categoria'),
             onTap: () => {
               Navigator.push(
                 context,
@@ -49,8 +47,8 @@ class NavDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: Icon(Icons.fitness_center),
-            title: Text('Praticar'),
+            leading: Icon(Icons.school),
+            title: const Text('Praticar'),
             onTap: () => {
               Navigator.push(
                 context,
@@ -61,8 +59,8 @@ class NavDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: Icon(Icons.list),
-            title: Text('Listas'),
+            leading: Icon(Icons.playlist_add),
+            title: const Text('Listas'),
             onTap: () => {
               Navigator.push(
                 context,
