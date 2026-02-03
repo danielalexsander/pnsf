@@ -86,7 +86,7 @@ class _CifraPageState extends State<CifraPage> {
                 value: 'link',
                 child: Row(
                   children: [
-                    Icon(Icons.link, size: 20,),
+                    Icon(Icons.link, size: 20, color: Color.fromARGB(255, 21, 56, 115)),
                     SizedBox(width: 8),
                     Text('Link'),
                   ],
