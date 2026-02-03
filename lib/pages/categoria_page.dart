@@ -167,8 +167,8 @@ class _CategoriaPageState extends State<CategoriaPage> {
                             builder: (context) => CifraPage(
                               idCifra: _newListCategoria[index]["id"],
                               tituloCifra: _newListCategoria[index]["titulo"],
-                              base64Cifra: _newListCategoria[index]
-                                  ["html_base64"],
+                              base64Cifra: _newListCategoria[index]["html_base64"],
+                              linkCifra: _newListCategoria[index]["link"],
                             ),
                           ),
                         );

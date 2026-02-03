@@ -270,8 +270,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                 builder: (context) => CifraPage(
                                   idCifra: _foundCifra[index]["id"],
                                   tituloCifra: _foundCifra[index]["titulo"],
-                                  base64Cifra: _foundCifra[index]
-                                      ["html_base64"],
+                                  base64Cifra: _foundCifra[index]["html_base64"],
+                                  linkCifra: _foundCifra[index]["link"],
                                 ),
                               ),
                             );

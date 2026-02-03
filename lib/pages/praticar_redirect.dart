@@ -158,6 +158,7 @@ class _PracticeState extends State<Practice> {
                           idCifra: _cifras[randomNumber]['id'],
                           tituloCifra: _cifras[randomNumber]['titulo'],
                           base64Cifra: _cifras[randomNumber]['html_base64'],
+                          linkCifra: _cifras[randomNumber]["link"],
                         ),
                       ),
                     );
