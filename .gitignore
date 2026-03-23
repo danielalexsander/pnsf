@@ -45,3 +45,4 @@ app.*.map.json
 # Chave Play Store
 key.properties
 app/upload-keystore.jks
+upload_certificate.pem
