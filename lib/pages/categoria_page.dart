@@ -169,6 +169,7 @@ class _CategoriaPageState extends State<CategoriaPage> {
                               tituloCifra: _newListCategoria[index]["titulo"],
                               base64Cifra: _newListCategoria[index]["html_base64"],
                               linkCifra: _newListCategoria[index]["link"],
+                              tom: _newListCategoria[index]["tom"],
                             ),
                           ),
                         );

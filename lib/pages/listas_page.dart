@@ -178,6 +178,7 @@ class _MyListState extends State<MyList> {
                               tituloCifra: _newListList[index]["titulo"],
                               base64Cifra: _newListList[index]["html_base64"],
                               linkCifra: _newListList[index]["link"],
+                              tom: _newListList[index]["tom"],
                             ),
                           ),
                         );
