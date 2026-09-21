@@ -9,7 +9,6 @@
 * @since        02/07/2024
 */
 
-import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -17,9 +16,12 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart';
 import 'package:pnsf/pages/cifra.dart';
 import 'package:pnsf/widgets/side_menu.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:pnsf/mixins/connectivity_status.dart';
+import 'package:pnsf/theme/app_settings.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await AppSettings.instance.load();
   runApp(const MyApp());
 }
 
@@ -28,15 +30,29 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'PNSF',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color.fromARGB(255, 21, 56, 115)),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Todas as Cifras'),
-      debugShowCheckedModeBanner: false,
+    return AnimatedBuilder(
+      animation: AppSettings.instance,
+      builder: (context, _) {
+        return MaterialApp(
+          title: 'PNSF',
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(
+                seedColor: const Color.fromARGB(255, 21, 56, 115)),
+            useMaterial3: true,
+          ),
+          darkTheme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: const Color.fromARGB(255, 21, 56, 115),
+              brightness: Brightness.dark,
+            ),
+            useMaterial3: true,
+          ),
+          themeMode:
+              AppSettings.instance.darkMode ? ThemeMode.dark : ThemeMode.light,
+          home: const MyHomePage(title: 'Todas as Cifras'),
+          debugShowCheckedModeBanner: false,
+        );
+      },
     );
   }
 }
@@ -50,30 +66,14 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> with ConnectivityStatusState<MyHomePage> {
   List _cifras = [];
 
   List _foundCifra = [];
 
-  List<ConnectivityResult> _connectionStatus = [ConnectivityResult.none];
-  final Connectivity _connectivity = Connectivity();
-  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
-
-  static const snackBarConnection = SnackBar(
-    content: Text('Tem conexão, buscou da internet'),
-  );
-
-  static const snackBarnoConnection = SnackBar(
-    content: Text('Sem conexão, buscou do local'),
-  );
-
   @override
   void initState() {
-    initConnectivity();
-
-    _connectivitySubscription =
-        _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
-
+    initConnectivityTracking();
     readJson();
     _foundCifra = _cifras;
     super.initState();
@@ -81,50 +81,18 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void dispose() {
-    _connectivitySubscription.cancel();
+    disposeConnectivityTracking();
     super.dispose();
-  }
-
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initConnectivity() async {
-    late List<ConnectivityResult> resultConnection;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      resultConnection = await _connectivity.checkConnectivity();
-    } on PlatformException catch (e) {
-      print('Couldn\'t check connectivity status error: $e');
-      return;
-    }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) {
-      return Future.value(null);
-    }
-
-    return _updateConnectionStatus(resultConnection);
-  }
-
-  Future<void> _updateConnectionStatus(
-      List<ConnectivityResult> resultConnection) async {
-    setState(() {
-      _connectionStatus = resultConnection;
-    });
-    // ignore: avoid_print
-    print('Connectivity changed: $_connectionStatus');
   }
 
   // Função que lê o JSON
   Future<void> readJson() async {
     Future.delayed(const Duration(seconds: 1), () async {
-      if (_connectionStatus.contains(ConnectivityResult.wifi) ||
-          _connectionStatus.contains(ConnectivityResult.mobile)) {
+      if (isOnline) {
         /**
         * VERSÃO ONLINE - BUSCA O JSON DO GITHUB RAW
         */
 
-        ScaffoldMessenger.of(context).showSnackBar(snackBarConnection);
         var url = Uri.parse(
             "https://raw.githubusercontent.com/danielalexsander/pnsf/master/assets/json/cifras.json");
         Response response = await get(url);
@@ -140,7 +108,6 @@ class _MyHomePageState extends State<MyHomePage> {
           _foundCifra = cifra["cifras"];
         });
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(snackBarnoConnection);
         /**
         * VERSÃO OFFLINE - BUSCA O JSON DO ASSETS
         */
@@ -218,6 +185,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
         iconTheme: IconThemeData(color: Colors.white),
+        actions: [buildConnectivityIndicator()],
       ),
       body: Column(
         children: <Widget>[

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:pnsf/theme/app_settings.dart';
 
 // #docregion platform_imports
 import 'package:webview_flutter_android/webview_flutter_android.dart';
@@ -32,6 +33,7 @@ class CifraPage extends StatefulWidget {
 class _CifraPageState extends State<CifraPage> {
   late final WebViewController _controller;
   int _semitoneOffset = 0;
+  late double _fontScale = AppSettings.instance.fontScale;
 
   static const List<String> _sharps = [
     'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'
@@ -60,6 +62,11 @@ class _CifraPageState extends State<CifraPage> {
     // #enddocregion platform_features
 
     controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+    controller.setNavigationDelegate(
+      NavigationDelegate(
+        onPageFinished: (_) => _applyDisplaySettings(),
+      ),
+    );
 
     var strCifra = utf8.decode(base64.decode(widget.base64Cifra));
     controller..loadHtmlString(strCifra);
@@ -150,6 +157,59 @@ class _CifraPageState extends State<CifraPage> {
     await _controller.runJavaScript(js);
   }
 
+  Future<void> _applyDisplaySettings() async {
+    await _applyFontScale(_fontScale);
+    if (AppSettings.instance.darkMode) {
+      await _applyDarkMode();
+    }
+  }
+
+  Future<void> _applyFontScale(double scale) async {
+    final js = '''
+      (function() {
+        var scale = $scale;
+        document.querySelectorAll('[style]').forEach(function(el) {
+          var currentPx = parseFloat(getComputedStyle(el).fontSize);
+          if (!currentPx) return;
+          if (!el.dataset.origFontSize) {
+            el.dataset.origFontSize = currentPx;
+          }
+          var base = parseFloat(el.dataset.origFontSize);
+          el.style.fontSize = (base * scale) + 'px';
+        });
+      })();
+    ''';
+    await _controller.runJavaScript(js);
+  }
+
+  Future<void> _applyDarkMode() async {
+    const js = '''
+      (function() {
+        var bg = '#121212';
+        var fg = '#e8e8e8';
+        document.body.style.backgroundColor = bg;
+        document.querySelectorAll('*').forEach(function(el) {
+          var cs = getComputedStyle(el);
+          if (cs.backgroundColor === 'rgb(255, 255, 255)') {
+            el.style.backgroundColor = bg;
+          }
+          if (cs.color === 'rgb(0, 0, 0)') {
+            el.style.color = fg;
+          }
+        });
+      })();
+    ''';
+    await _controller.runJavaScript(js);
+  }
+
+  Future<void> _setFontScale(double scale, void Function(void Function()) setSheetState) async {
+    final clamped = scale.clamp(AppSettings.minFontScale, AppSettings.maxFontScale);
+    setState(() => _fontScale = clamped);
+    setSheetState(() {});
+    await AppSettings.instance.setFontScale(clamped);
+    await _applyFontScale(clamped);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -182,50 +242,155 @@ class _CifraPageState extends State<CifraPage> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          Expanded(child: WebViewWidget(controller: _controller)),
-          _buildTransposeBar(),
-        ],
+      body: WebViewWidget(controller: _controller),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: const Color.fromARGB(255, 21, 56, 115),
+        onPressed: _showDisplaySheet,
+        child: const Icon(Icons.tune, color: Colors.white),
       ),
     );
   }
 
-  Widget _buildTransposeBar() {
-    return Container(
-      color: const Color.fromARGB(255, 21, 56, 115),
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          TextButton.icon(
-            onPressed: () => _transposeStep(-1),
-            icon: const Icon(Icons.arrow_downward, color: Colors.white, size: 18),
-            label: const Text('½ tom', style: TextStyle(color: Colors.white, fontSize: 13)),
-          ),
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                'Tom',
-                style: TextStyle(color: Colors.white70, fontSize: 11),
-              ),
-              Text(
-                _currentTom,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+  bool get _hasTom => widget.tom != null && widget.tom!.isNotEmpty;
+
+  void _showDisplaySheet() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setSheetState) {
+            return SafeArea(
+              top: false,
+              child: Container(
+                margin: const EdgeInsets.all(16),
+                padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(255, 21, 56, 115),
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      blurRadius: 16,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (_hasTom) ...[
+                      const Text(
+                        'Transpor tom',
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          _sheetStepButton(
+                            icon: Icons.remove,
+                            onPressed: () {
+                              _transposeStep(-1);
+                              setSheetState(() {});
+                            },
+                          ),
+                          Text(
+                            _currentTom,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 40,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          _sheetStepButton(
+                            icon: Icons.add,
+                            onPressed: () {
+                              _transposeStep(1);
+                              setSheetState(() {});
+                            },
+                          ),
+                        ],
+                      ),
+                      if (_semitoneOffset != 0) ...[
+                        const SizedBox(height: 8),
+                        TextButton(
+                          onPressed: () {
+                            _transposeStep(-_semitoneOffset);
+                            setSheetState(() {});
+                          },
+                          child: Text(
+                            'Voltar ao tom original (${widget.tom})',
+                            style: const TextStyle(color: Colors.white70, fontSize: 13),
+                          ),
+                        ),
+                      ],
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 20),
+                        child: Divider(color: Colors.white24, height: 1),
+                      ),
+                    ],
+                    const Text(
+                      'Tamanho da letra',
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        _sheetStepButton(
+                          icon: Icons.remove,
+                          onPressed: () => _setFontScale(
+                            _fontScale - 0.1,
+                            setSheetState,
+                          ),
+                        ),
+                        Text(
+                          '${(_fontScale * 100).round()}%',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        _sheetStepButton(
+                          icon: Icons.add,
+                          onPressed: () => _setFontScale(
+                            _fontScale + 0.1,
+                            setSheetState,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
-          TextButton.icon(
-            onPressed: () => _transposeStep(1),
-            icon: const Icon(Icons.arrow_upward, color: Colors.white, size: 18),
-            label: const Text('½ tom', style: TextStyle(color: Colors.white, fontSize: 13)),
-          ),
-        ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _sheetStepButton({required IconData icon, required VoidCallback onPressed}) {
+    return Material(
+      color: Colors.white.withOpacity(0.12),
+      shape: const CircleBorder(),
+      child: InkWell(
+        onTap: onPressed,
+        customBorder: const CircleBorder(),
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Icon(icon, color: Colors.white, size: 24),
+        ),
       ),
     );
   }

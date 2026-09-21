@@ -3,6 +3,7 @@ import 'package:pnsf/main.dart';
 import 'package:pnsf/pages/categoria_list.dart';
 import 'package:pnsf/pages/listas_list.dart';
 import 'package:pnsf/pages/praticar_redirect.dart';
+import 'package:pnsf/theme/app_settings.dart';
 
 class NavDrawer extends StatelessWidget {
   @override
@@ -70,6 +71,18 @@ class NavDrawer extends StatelessWidget {
                   ),
                 ),
               )
+            },
+          ),
+          const Divider(),
+          AnimatedBuilder(
+            animation: AppSettings.instance,
+            builder: (context, _) {
+              return SwitchListTile(
+                secondary: const Icon(Icons.dark_mode_outlined),
+                title: const Text('Modo escuro'),
+                value: AppSettings.instance.darkMode,
+                onChanged: (value) => AppSettings.instance.setDarkMode(value),
+              );
             },
           ),
         ],
